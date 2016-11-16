@@ -12,6 +12,7 @@ import {
   Animated
 } from 'react-native';
 import Switcher from './Switcher';
+var TimerMixin = require('react-timer-mixin');
 let windowHeight = Dimensions.get('window').height;
 let windowWidth = Dimensions.get('window').width;
 //import viewImageHistory from  './viewImageHistory';
@@ -23,6 +24,7 @@ var viewWeight = '';
 var viewRepeat = '';
 var sourceString = '';
 class ViewImage extends Component {
+  mixins: [TimerMixin]
   constructor(props) {
     super(props);
     this.state={
@@ -31,12 +33,38 @@ class ViewImage extends Component {
       viewRepeat:'',
       modalVisible: false,
       transparent:true,
+      time: this.props.time ? this.props.time : '',
+      disabled: false,
+      btnModalTxt: "Ya!",
+      btnModalColor: "#F9CF00",
+
     };
     this.setViewGif = this._setViewGif.bind(this);
   }
   propTypes:{
     source: React.propTypes.string
   }
+
+  /////////////////
+  //countDown
+  _startCountDown(){
+    var timer = ()=> {
+      var time = this.state.time - 1;
+      this.setState({time: time});
+      if (time > 0) {
+        TimerMixin.setTimeout(timer, 1000);
+      }else if (time == 0) {
+        this.setState({btnModalTxt: "Otra vez?"});
+        this.setState({btnModalColor: "#9e2818"});
+      } else {
+        this.setState({disabled: false});
+        this.setState({time: this.props.time ? this.props.time : 60});
+      }
+    };
+    TimerMixin.setTimeout(timer.bind(this), 1000);
+  }
+  //countDown
+  ///////////////////
 
 
   _RealmModel(){
@@ -54,7 +82,7 @@ class ViewImage extends Component {
         id:1,
         gifString: sourceString,
         weight: '150 k',
-        repeat: '30:00'
+        repeat: '90'
       })
     });
     //this.setState({viewGif:NewBulking.gifString});
@@ -63,6 +91,7 @@ class ViewImage extends Component {
     viewWeight = NewBulking.weight;
     //viewRepeat = NewBulking.repeat;
     this.setState({viewRepeat: NewBulking.repeat});
+    this.setState({time: NewBulking.repeat});
   }
 
   _setViewGif(strGif){
@@ -142,16 +171,25 @@ class ViewImage extends Component {
             </View>
             <View style={styles.TimerViewModal}>
               <Text style={styles.TimerTxt}>
-                {this.state.viewRepeat}
+                {this.state.time}
               </Text>
             </View>
-            <View style={styles.btnStopViewModal}>
-              <Text style={styles.btnStopTxt}>
-                YA!
-              </Text>
-            </View>
+              <View style={{backgroundColor:this.state.btnModalColor,
+                            flexDirection: 'row',
+                            flex: .15,
+                            alignItems: 'center',
+                            justifyContent: 'center',}}>
+                <TouchableHighlight onPress={this._startCountDown.bind(this)}>
+
+                <Text style={styles.btnStopTxt}>
+                  {this.state.btnModalTxt}
+                </Text>
+              </TouchableHighlight>
+
+              </View>
             <View style={styles.fillView}/>
           </View>
+
         </Modal>
 
       </View>
@@ -247,7 +285,6 @@ const styles = StyleSheet.create({
   btnStopViewModal:{
     flexDirection: 'row',
     flex: .15,
-    backgroundColor: '#F9CF00',
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -261,25 +298,6 @@ const styles = StyleSheet.create({
   },
  //fito
 /////////////////////
-containerTimer: {
-    flex: 1,
-    justifyContent: 'space-around',
-    alignItems: 'center',
-    backgroundColor: '#F5FCFF',
-  },
-  rowTimer: {
-    padding: 7,
-    backgroundColor: 'red',
-    borderRadius: 7,
-  },
-  tipTimer: {
-    fontSize: 20,
-  },
-  cdTimer: {
-    textAlign: 'center',
-    color: 'white',
-    fontSize: 20,
-  },
 
 });
 export default ViewImage
