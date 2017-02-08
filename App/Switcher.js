@@ -105,7 +105,7 @@ class Switcher extends Component{
         </View>
         <View style={styles.detailView}>
           <View style={styles.columnDetailView}>
-            <Text style={styles.detailTitle}>Push-ups</Text>
+            <Text style={styles.detailTitle}>{this.props.source}</Text>
             <Text style={styles.detailContent}>Este ejercicio se hace asi y asado. Es un hecho establecido hace demasiado tiempo que un lector se distraera con el contenido del texto de un sitio mientras que mira su diseño.</Text>
           </View>
         </View>
@@ -129,9 +129,9 @@ const styles = StyleSheet.create({
   },
   redView:{
     flexDirection: 'row',
-    flex: .05,
+    flex: .1,
     height: 50,
-    backgroundColor: '#e34a3e',
+    backgroundColor: '#F9CF00',
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -151,7 +151,7 @@ const styles = StyleSheet.create({
     flex: .9,
   },
   advText:{
-    color: '#ffffff',
+    fontWeight: 'bold',
     fontSize: 15,
   },
   gifView:{

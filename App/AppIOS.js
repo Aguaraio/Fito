@@ -16,7 +16,7 @@ class App extends Component{
     }
 
     configureScene (route) {
-      return Navigator.SceneConfigs.VerticalDownSwipeJump
+      return Navigator.SceneConfigs.VerticalUpSwipeJump
     }
 
     render () {
@@ -24,7 +24,7 @@ class App extends Component{
         <Navigator
           configureScene={this.configureScene.bind(this)}
           style={{ flex: 1, backgroundColor: 'white' }}
-          initialRoute={{ name: 'TabBar' }}
+          initialRoute={{ name: 'TabBar', index: 0 }}
           renderScene={this.renderScene.bind(this)} />
       );
     }

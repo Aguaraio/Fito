@@ -45,23 +45,22 @@ class BarcodeScannerApp extends Component {
     source : React.propTypes.bool
   }
 
-  barcodeReceived() {
-  //  if (e.data !== qrString && e.type == this.state.camera.barCodeType && sendCode )
-  //  {
+  barcodeReceived(e) {
+    if (e.data !== qrString && e.type == this.state.camera.barCodeType && sendCode )
+    {
 
 //    Vibration.vibrate();
 
       this.props.navigator.push({
             name: 'ViewImage',
             passProps: {
-              closeModal: this._closeModal,
-              gotoFBbutton : this._gotoFBbutton,
-        //      source:e.data
+              source:e.data,
+              timerSource: '30'
             }
           });
-    //  qrString = e.data;
-  //  }
+      qrString = e.data;
   }
+}
 
   _sendCodeIn(){
     return sendCode = true;
@@ -78,16 +77,16 @@ class BarcodeScannerApp extends Component {
               this.camera = cam;
             }}
             style={{flex:1}}
-
+            onBarCodeRead={this.barcodeReceived.bind(this)}
             viewFinderHeight={this.state.viewFinderHeight}
             viewFinderWidth={this.state.viewFinderWidth}>
 
             <View style={styles.statusBar}>
               <TouchableHighlight
                 underlayColor='transparent'
-                onLongPress={this.barcodeReceived.bind(this)}
+                onLongPress={this._sendCodeIn.bind(this)}
                 onPressOut={this._sendCodeOut.bind(this)}>
-                <View style={styles.btnCapture}/>
+                <View style={styles.btnCapture}></View>
               </TouchableHighlight>
             </View>
           </Camera>
@@ -151,14 +150,16 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
 
-    marginTop: windowHeight * .78
+    marginTop: windowHeight * .7,
+    marginBottom: windowHeight * .5
+
 
   },
   btnCapture:{
     backgroundColor: '#F9CF00',
-    width: 60,
-    height: 85,
-    borderRadius: 30
+    width: 100,
+    height: 100,
+    borderRadius: 50
   }
   });
 

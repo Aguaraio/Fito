@@ -32,7 +32,7 @@ class UserProfile extends Component{
       userBirthday: '',
       userID: '',
       userLocation: '',
-
+      sourceUserProg: '.8',
       modalVisible: false,
     }
     //this.userPicture = '';
@@ -42,7 +42,7 @@ class UserProfile extends Component{
     this.getUserPic = this._getUserPic.bind(this);
   }
   propTypes:{
-    source: React.propTypes.string
+    source: React.propTypes.string,
   }
 
   _setModalVisible(visible) {
@@ -67,12 +67,13 @@ class UserProfile extends Component{
       });
   }
 
-  _gotoViewImage(gifString){
+  _gotoViewImage(gifString, timerString){
     console.log(gifString);
           this.props.navigator.push({
                 name: 'ViewImage',
                 passProps:{
                   source: gifString,
+                  timerSource: timerString
                 }
               });
   }
@@ -106,9 +107,22 @@ class UserProfile extends Component{
         </View>
         <View style={styles.progView}>
           <View style={styles.lvlProg}>
-            <Text style={styles.lvlText}>
-              NIVEL 1
-            </Text>
+            <View style={{backgroundColor:'#F9CF00',
+                          flexDirection:'column',
+                          flex:1,
+                          width: windowWidth * this.state.sourceUserProg,
+                          position: "absolute",
+                          top: 0,
+                          height: 50,
+                        }}>
+                  <View style={{backgroundColor:'rgba(0,0,0,0)', position:'absolute',top: 5, left: 130}}>
+                    <Text style={styles.lvlText}>
+                      NIVEL 1
+                    </Text>
+                  </View>
+            </View>
+
+
           </View>
         </View>
         <View style={styles.storyView}>
@@ -119,75 +133,76 @@ class UserProfile extends Component{
                         showsHorizontalScrollIndicator={false}
                         centerContent={true}>
 
-                <View style={styles.gifCompView}>
-                  <View style={styles.gifComp}>
-                    <TouchableHighlight onPress={this._gotoViewImage.bind(this, 'curvy-bench-press')}>
+                <TouchableHighlight onPress={this._gotoViewImage.bind(this, 'curvy-bench-press', '30')}>
+                  <View style={styles.gifCompView}>
+                    <View style={styles.gifComp}>
                       <Image source={require('./../img/curvy-bench-press.gif')} style={{width: 170, height: 100}}></Image>
-                    </TouchableHighlight>
-                  </View>
+                    </View>
 
-                  <View style={styles.gifCompTitle}>
-                    <Text style={styles.gifComTxt}>
-                      curvy-bench-press
-                    </Text>
+                    <View style={styles.gifCompTitle}>
+                      <Text style={styles.gifComTxt}>
+                        curvy-bench-press
+                      </Text>
+                    </View>
                   </View>
-                </View>
+                </TouchableHighlight>
 
-                <View style={styles.gifCompView}>
-                  <View style={styles.gifComp}>
-                    <TouchableHighlight onPress={this._gotoViewImage.bind(this, 'dumbbell-exercises')}>
-                    <Image source={require('./../img/dumbbell-exercises.gif')} style={{width: 170, height: 100}}/>
-                    </TouchableHighlight>
-                  </View>
+                <TouchableHighlight onPress={this._gotoViewImage.bind(this, 'dumbbell-exercises', '15')}>
+                  <View style={styles.gifCompView}>
+                    <View style={styles.gifComp}>
+                      <Image source={require('./../img/dumbbell-exercises.gif')} style={{width: 170, height: 100}}/>
+                    </View>
 
-                  <View style={styles.gifCompTitle}>
-                    <Text style={styles.gifComTxt}>
-                      dumbbell-exercises
-                    </Text>
+                    <View style={styles.gifCompTitle}>
+                      <Text style={styles.gifComTxt}>
+                        dumbbell-exercises
+                      </Text>
+                    </View>
                   </View>
-                </View>
+                </TouchableHighlight>
 
-                <View style={styles.gifCompView}>
-                  <View style={styles.gifComp}>
-                    <TouchableHighlight onPress={this._gotoViewImage.bind(this, 'decline-bench-press')}>
-                    <Image source={require('./../img/decline-bench-press.gif')} style={{width: 170, height: 100}}/>
-                    </TouchableHighlight>
-                  </View>
+                <TouchableHighlight onPress={this._gotoViewImage.bind(this, 'decline-bench-press', '45')}>
+                  <View style={styles.gifCompView}>
+                    <View style={styles.gifComp}>
+                      <Image source={require('./../img/decline-bench-press.gif')} style={{width: 170, height: 100}}/>
+                    </View>
 
-                  <View style={styles.gifCompTitle}>
-                    <Text style={styles.gifComTxt}>
-                      decline-bench-press
-                    </Text>
+                    <View style={styles.gifCompTitle}>
+                      <Text style={styles.gifComTxt}>
+                        decline-bench-press
+                      </Text>
+                    </View>
                   </View>
-                </View>
+                </TouchableHighlight>
 
-                <View style={styles.gifCompView}>
-                  <View style={styles.gifComp}>
-                    <TouchableHighlight onPress={this._gotoViewImage.bind(this, 'curvy-leg-curls')}>
-                    <Image source={require('./../img/curvy-leg-curls.gif')} style={{width: 170, height: 100}}/>
-                    </TouchableHighlight>
-                  </View>
+                <TouchableHighlight onPress={this._gotoViewImage.bind(this, 'curvy-leg-curls', '60')}>
+                  <View style={styles.gifCompView}>
+                    <View style={styles.gifComp}>
+                      <Image source={require('./../img/curvy-leg-curls.gif')} style={{width: 170, height: 100}}/>
+                    </View>
 
-                  <View style={styles.gifCompTitle}>
-                    <Text style={styles.gifComTxt}>
-                      curvy-leg-curls
-                    </Text>
+                    <View style={styles.gifCompTitle}>
+                      <Text style={styles.gifComTxt}>
+                        curvy-leg-curls
+                      </Text>
+                    </View>
                   </View>
-                </View>
+                </TouchableHighlight>
 
-                <View style={styles.gifCompView}>
-                  <View style={styles.gifComp}>
-                    <TouchableHighlight onPress={this._gotoViewImage.bind(this, 'cable-bicep-exercises')}>
-                    <Image source={require('./../img/cable-bicep-exercises.gif')} style={{width: 170, height: 100}}/>
-                    </TouchableHighlight>
-                  </View>
+                <TouchableHighlight onPress={this._gotoViewImage.bind(this, 'cable-bicep-exercises', '20')}>
+                  <View style={styles.gifCompView}>
+                    <View style={styles.gifComp}>
+                      <Image source={require('./../img/cable-bicep-exercises.gif')} style={{width: 170, height: 100}}/>
+                    </View>
 
-                  <View style={styles.gifCompTitle}>
-                    <Text style={styles.gifComTxt}>
-                      cable-bicep-exercises
-                    </Text>
+                    <View style={styles.gifCompTitle}>
+                      <Text style={styles.gifComTxt}>
+                        cable-bicep-exercises
+                      </Text>
+                    </View>
                   </View>
-                </View>
+                </TouchableHighlight>
+
 
 
 

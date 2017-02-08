@@ -12,7 +12,7 @@ import {
   Animated
 } from 'react-native';
 import Switcher from './Switcher';
-var TimerMixin = require('react-timer-mixin');
+import TimerMixin from 'react-timer-mixin';
 let windowHeight = Dimensions.get('window').height;
 let windowWidth = Dimensions.get('window').width;
 //import viewImageHistory from  './viewImageHistory';
@@ -23,6 +23,8 @@ var strRepeat = '';
 var viewWeight = '';
 var viewRepeat = '';
 var sourceString = '';
+var timerSourceString = '';
+var btnStartPressed = 0;
 class ViewImage extends Component {
   mixins: [TimerMixin]
   constructor(props) {
@@ -37,38 +39,68 @@ class ViewImage extends Component {
       disabled: false,
       btnModalTxt: "Ya!",
       btnModalColor: "#F9CF00",
-
+      clearID: '',
     };
     this.setViewGif = this._setViewGif.bind(this);
   }
   propTypes:{
-    source: React.propTypes.string
+    source: React.propTypes.string,
+    timerSource : React.propTypes.string
   }
 
-  /////////////////
+
+   //////////////////////////////
+  //MODAL countDown
+  _setModalVisible(visible){
+    this.setState({modalVisible: visible});
+   }
+   _closeModal(){
+     this.setState({modalVisible: false});
+     TimerMixin.clearTimeout(this.state.clearID);
+     btnStartPressed = 0;
+   }
+
+   /////////////////
   //countDown
   _startCountDown(){
-    var timer = ()=> {
-      var time = this.state.time - 1;
-      this.setState({time: time});
-      if (time > 0) {
-        TimerMixin.setTimeout(timer, 1000);
-      }else if (time == 0) {
-        this.setState({btnModalTxt: "Otra vez?"});
-        this.setState({btnModalColor: "#9e2818"});
-      } else {
-        this.setState({disabled: false});
-        this.setState({time: this.props.time ? this.props.time : 60});
-      }
-    };
-    TimerMixin.setTimeout(timer.bind(this), 1000);
+    if (btnStartPressed == 0) {
+      btnStartPressed = 1;
+      this.setState({btnModalTxt: "Ya!"});
+      this.setState({btnModalColor: "#F9CF00"});
+      var timer = ()=> {
+        var time= this.state.time -1;
+        this.setState({time: time});
+        if (time > 0) {
+          var innerClearid = TimerMixin.setTimeout(timer, 1000);
+          this.setState({clearID:innerClearid});
+        }else if (time == 0) {
+          this.setState({btnModalTxt: "Otra vez?"});
+          this.setState({btnModalColor: "#9e2818"});
+          btnStartPressed = 0;
+        } else {
+          this.setState({disabled: false});
+          this.setState({time: this.state.viewRepeat});
+          btnStartPressed = 0;
+        }
+      };
+      var clearid = TimerMixin.setTimeout(timer.bind(this), 1000);
+      this.setState({clearID: clearid});
+    }else if (btnStartPressed ==1 ) {
+      this.setState({btnModalTxt: "Reanudar"});
+      TimerMixin.clearTimeout(this.state.clearID);
+      btnStartPressed = 0;
+    }
   }
-  //countDown
+
+   //countDown
   ///////////////////
 
+ //MODAL countDown
+//////////////////////////
 
   _RealmModel(){
     sourceString = this.props.source;
+    timerSourceString = this.props.timerSource;
     //Borramos todos los registros
     let AllBulking = BulkingModel.objects('Bulking');
     BulkingModel.write(() => {
@@ -82,7 +114,7 @@ class ViewImage extends Component {
         id:1,
         gifString: sourceString,
         weight: '150 k',
-        repeat: '90'
+        repeat: timerSourceString,
       })
     });
     //this.setState({viewGif:NewBulking.gifString});
@@ -91,6 +123,7 @@ class ViewImage extends Component {
     viewWeight = NewBulking.weight;
     //viewRepeat = NewBulking.repeat;
     this.setState({viewRepeat: NewBulking.repeat});
+
     this.setState({time: NewBulking.repeat});
   }
 
@@ -111,16 +144,13 @@ class ViewImage extends Component {
     //console.log('PASA SETVIEWGIF');
   }
 
-  _setModalVisible(visible){
-    this.setState({modalVisible: visible});
-   }
-
    _returnNavigator(){
      this.props.navigator.pop();
    }
 
   componentWillMount(){
     this._RealmModel();
+    btnStartPressed = 0;
   }
 
   render () {
@@ -130,20 +160,23 @@ class ViewImage extends Component {
           <Switcher source={this.state.viewGif}/>
         </View>
         <View style={styles.detailView}>
-          <View style={styles.btnStart}>
-            <TouchableHighlight onPress={()=>{this._setModalVisible(true)}} style={styles.btnStartHighLight}>
+
+          <TouchableHighlight onPress={()=>{this._setModalVisible(true)}} style={styles.btnStartHighLight}>
+              <View style={styles.btnStart}>
                 <Text style={styles.btnStartTxt}>
                   EMPEZAR
                 </Text>
-            </TouchableHighlight>
-          </View>
-          <View style={styles.btnStart}>
-            <TouchableHighlight onPress={this._returnNavigator.bind(this)} style={styles.btnStartHighLight}>
+              </View>
+          </TouchableHighlight>
+
+          <TouchableHighlight onPress={this._returnNavigator.bind(this)} style={styles.btnStartHighLight}>
+              <View style={styles.btnStart}>
                 <Text style={styles.btnStartTxt}>
-                  Volver
+                  VOLVER
                 </Text>
-            </TouchableHighlight>
-          </View>
+              </View>
+          </TouchableHighlight>
+
         </View>
 
         <Modal
@@ -151,7 +184,7 @@ class ViewImage extends Component {
           transparent={this.state.transparent}
           visible={this.state.modalVisible}
           >
-          <TouchableWithoutFeedback onPress={()=>{this._setModalVisible(!this.state.modalVisible)}}>
+          <TouchableWithoutFeedback onPress={this._closeModal.bind(this)}>
             <View style={styles.viewInvisible}>
             </View>
           </TouchableWithoutFeedback>
@@ -174,20 +207,21 @@ class ViewImage extends Component {
                 {this.state.time}
               </Text>
             </View>
+            <TouchableHighlight onPress={this._startCountDown.bind(this)} style={{height: 50, width: windowWidth}}>
+
               <View style={{backgroundColor:this.state.btnModalColor,
                             flexDirection: 'row',
                             flex: .15,
                             alignItems: 'center',
-                            justifyContent: 'center',}}>
-                <TouchableHighlight onPress={this._startCountDown.bind(this)}>
+                            justifyContent: 'center'}}>
 
                 <Text style={styles.btnStopTxt}>
                   {this.state.btnModalTxt}
                 </Text>
-              </TouchableHighlight>
-
               </View>
-            <View style={styles.fillView}/>
+            </TouchableHighlight>
+
+            <View style={styles.fillView}></View>
           </View>
 
         </Modal>
@@ -225,23 +259,23 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   btnStart:{
+    flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: '#F9CF00',
     marginLeft: 5,
     height: 70,
-    width: 200,
+    width: 160,
   },
   btnStartHighLight:{
-    flex: 1,
+    marginLeft: 2,
+    marginRight: 2,
   },
   btnStartTxt:{
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
     flex: 1,
     fontSize: 20,
     color: '#ffffff',
+
   },
   ////ModalExercise
   containerModal:{

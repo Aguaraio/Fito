@@ -75,7 +75,7 @@ class TabBar extends Component{
           title="ESCANEAR"
           selected={this.state.selectedTab === 'barcodeTab'}
           onPress={this._selectBarcode.bind(this)}>
-          <BarcodeScannerIOS source={this.showModal}/>
+          <BarcodeScannerIOS source={this.showModal} navigator={this.props.navigator}/>
         </TabBarIOS.Item>
 
         <TabBarIOS.Item
